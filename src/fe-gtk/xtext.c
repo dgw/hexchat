@@ -434,6 +434,7 @@ gtk_xtext_init (GtkXText * xtext)
 	xtext->pixel_offset = 0;
 	xtext->underline = FALSE;
 	xtext->strikethrough = FALSE;
+	xtext->monospace = FALSE;
 	xtext->hidden = FALSE;
 	xtext->font = NULL;
 	xtext->layout = NULL;
@@ -2453,6 +2454,7 @@ gtk_xtext_strip_color (unsigned char *text, int len, unsigned char *outbuf,
 			case ATTR_BOLD:
 			case ATTR_UNDERLINE:
 			case ATTR_STRIKETHROUGH:
+			case ATTR_MONOSPACE:
 			case ATTR_ITALICS:
 				xtext_do_chunk (&c);
 				if (*text == ATTR_RESET)
@@ -2661,6 +2663,7 @@ gtk_xtext_reset (GtkXText * xtext, int mark, int attribs)
 	{
 		xtext->underline = FALSE;
 		xtext->strikethrough = FALSE;
+		xtext->monospace = FALSE;
 		xtext->hidden = FALSE;
 	}
 	if (!mark)
@@ -2977,6 +2980,12 @@ gtk_xtext_render_str (GtkXText * xtext, int y, textentry * ent,
 				pstr += j + 1;
 				j = 0;
 				break;
+			case ATTR_MONOSPACE:
+				RENDER_FLUSH;
+				xtext->monospace = !xtext->monospace;
+				pstr += j + 1;
+				j = 0;
+				break;
 			case ATTR_ITALICS:
 				RENDER_FLUSH;
 				*emphasis ^= EMPH_ITAL;
@@ -3208,6 +3217,7 @@ find_next_wrap (GtkXText * xtext, textentry * ent, unsigned char *str,
 			case ATTR_BOLD:
 			case ATTR_UNDERLINE:
 			case ATTR_STRIKETHROUGH:
+			case ATTR_MONOSPACE:
 			case ATTR_ITALICS:
 				if (*str == ATTR_RESET)
 					emphasis = 0;

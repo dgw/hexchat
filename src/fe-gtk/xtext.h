@@ -39,6 +39,7 @@
 #define ATTR_REVERSE			'\026'
 #define ATTR_ITALICS			'\035'
 #define ATTR_STRIKETHROUGH	'\036'
+#define ATTR_MONOSPACE		'\021'
 #define ATTR_UNDERLINE		'\037'
 
 /* these match palette.h */
@@ -209,6 +210,7 @@ struct _GtkXText
 	/* current text states */
 	unsigned int underline:1;
 	unsigned int strikethrough:1;
+	unsigned int monospace:1;
 	unsigned int hidden:1;
 
 	/* text parsing states */

@@ -401,6 +401,18 @@ insert_strikethrough (SexySpellEntry *entry, guint start, gboolean toggle)
 }
 
 static void
+insert_monospace (SexySpellEntry *entry, guint start, gboolean toggle)
+{
+	PangoAttribute *mattr;
+
+	// TODO: Don't know how to toggle between the user's actual font choices from config
+	mattr  = pango_attr_family_new (toggle ? "sans serif" : "monospace");
+	mattr->start_index = start;
+	mattr->end_index = PANGO_ATTR_INDEX_TO_TEXT_END;
+	pango_attr_list_change (entry->priv->attr_list, mattr);
+}
+
+static void
 insert_color (SexySpellEntry *entry, guint start, int fgcolor, int bgcolor)
 {
 	PangoAttribute *fgattr;
@@ -441,6 +453,7 @@ insert_reset (SexySpellEntry *entry, guint start)
 	insert_underline (entry, start, TRUE);
 	insert_italic (entry, start, TRUE);
 	insert_strikethrough (entry, start, TRUE);
+	insert_monospace (entry, start, TRUE);
 	insert_color (entry, start, -1, -1);
 }
 
@@ -931,6 +944,7 @@ check_attributes (SexySpellEntry *entry, const char *text, int len)
 	gboolean italic = FALSE;
 	gboolean underline = FALSE;
 	gboolean strikethrough = FALSE;
+	gboolean monospace = FALSE;
 	int parsing_color = 0;
 	char fg_color[3];
 	char bg_color[3];
@@ -961,6 +975,12 @@ check_attributes (SexySpellEntry *entry, const char *text, int len)
 			strikethrough = !strikethrough;
 			goto check_color;
 
+		case ATTR_MONOSPACE:
+			insert_hiddenchar (entry, i, i + 1);
+			insert_monospace (entry, i, monospace);
+			monospace = !monospace;
+			goto check_color;
+
 		case ATTR_UNDERLINE:
 			insert_hiddenchar (entry, i, i + 1);
 			insert_underline (entry, i, underline);
@@ -974,6 +994,7 @@ check_attributes (SexySpellEntry *entry, const char *text, int len)
 			italic = FALSE;
 			underline = FALSE;
 			strikethrough = FALSE;
+			monospace = FALSE;
 			goto check_color;
 
 		case ATTR_HIDDEN:

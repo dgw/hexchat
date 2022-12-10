@@ -4449,6 +4449,9 @@ check_special_chars (char *cmd, int do_ascii) /* check for %X */
 				case 'S':
 					buf[i] = '\036';
 					break;
+				case 'M':
+					buf[i] = '\021';
+					break;
 				case 'C':
 					buf[i] = '\003';
 					break;
